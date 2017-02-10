@@ -9,6 +9,8 @@
 ## Website:      www.ibiblio.org/apollo/index.html
 ## Mod history:  2016-09-30 RSB  Created draft version.
 ##               2016-10-25 MAS  Transcribed.
+##		 2016-12-06 RSB	 Comments proofed using octopus/ProoferComments,
+##				 no changes made.
 
 ## Page 709
 # PROGRAM DESCRIPTION
@@ -91,7 +93,7 @@ MP6B            TC              PHASCHNG
                -GENADR          656SEC
                 EBANK=          MP6TO7
                 2CADR           CBXPNDR
-#                                   CALL C-BAND TRANSPONDER-ON*
+# REF   1       27,2536   56063 1  CALL C-BAND TRANSPONDER-ON*
 
                 EXTEND
                 DCA             656SEC                          # LONGCALL 10 M 56 S
@@ -101,7 +103,7 @@ MP6B            TC              PHASCHNG
 
                 TCF             TASKOVER
 656SEC          2DEC            65600
-#                                   C-BAND TRANSPONDER-ON*
+#  		27,2546   00100 0  C-BAND TRANSPONDER-ON*
 
 CBXPNDR         TC              1LMP
                 DEC             106

@@ -1,5 +1,6 @@
 ### FILE="Main.annotation"
 ## Copyright:   Public domain.
+## Filename:    CHECK_EQUALS_LIST.agc
 ## Purpose:     A section of Luminary revision 210.
 ##              It is part of the source code for the Lunar Module's (LM)
 ##              Apollo Guidance Computer (AGC) for Apollo 15-17.
@@ -7,12 +8,14 @@
 ##              that the code format has been changed to conform to the
 ##              requirements of the yaYUL assembler rather than the
 ##              original YUL assembler.
-## Reference:   pp. XXX-XXX
+## Reference:   pp. 161-162
 ## Assembler:   yaYUL
 ## Contact:     Ron Burkey <info@sandroid.org>.
 ## Website:     www.ibiblio.org/apollo/index.html
 ## Mod history: 2016-11-17 JL   Created from Artemis072 version.
 ##              2016-11-20 HG   Transcribed
+##		2016-12-23 RSB	Proofed comment text with octopus/ProoferComments
+##				and fixed all errors found.
 
 ## Page 161
 # THIS LIST IS MAINTAINED TO ENSURE THAT CERTAIN ERASABLE LOCATIONS
@@ -32,7 +35,7 @@
 
 # THIS LIST SHOULD BE UPDATED FOR ANY CHANGES TO THE DOWNLINK LISTS.
 
-# THIS LIST IS MAINTAINED BY  SUMNER ORSENBERG
+# THIS LIST IS MAINTAINED BY  SUMNER ROSENBERG
 #
 
 TIME1           CHECK=          TIME2           +1

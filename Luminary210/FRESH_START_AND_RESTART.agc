@@ -1,5 +1,6 @@
 ### FILE="Main.annotation"
 ## Copyright:   Public domain.
+## Filename:    FRESH_START_AND_RESTART.agc
 ## Purpose:     A section of Luminary revision 210.
 ##              It is part of the source code for the Lunar Module's (LM)
 ##              Apollo Guidance Computer (AGC) for Apollo 15-17.
@@ -13,6 +14,16 @@
 ## Website:     www.ibiblio.org/apollo/index.html
 ## Mod history: 2016-11-17 JL   Created from Luminary131 version.
 ##              2016-11-22 HG   Transcribed
+##              2016-12-07 HG   fix P00 -> POO
+##                              Change DNLADPOO -> DNLADP00
+##                                     COUNT* $$/POO -> COUNT* $$/P00
+##                                     R00 -> ROO
+##                                     R00AD -> ROOAD 
+##                                     RENDN00 -> RENDNOO
+##                                     change POO -> P00 in some comments
+##              2016-12-11 HG  Fix operator CA BANKCALL -> TC BANKCALL
+##		2016-12-23 RSB	Proofed comment text with octopus/ProoferComments
+##				and fixed all errors found.
 
 ## Page 222
                 BANK            10
@@ -23,7 +34,7 @@
 
                 COUNT*          $$/START                # FRESH AND RESTART
 SLAP1           INHINT                                  # FRESH START.  COMES HERE FROM PINBALL.
-                TC              STARTSUB                # SUBROUTINE DOES MOST OF THE WORK
+                TC              STARTSUB                # SUBROUTINE DOES MOST OF THE WORK.
 
 STARTSW         TCF             SKIPSIM                 # PATCH....TCF STARTSIM...FOR SIMULATION
 STARTSIM        CAF             BIT14
@@ -69,7 +80,7 @@ DOFSTRT1        CA              PRIO30
                 TS              PVALVEST                # FOR RCS FAILURE MONITOR
                 TS              ERESTORE                # ***** MUST NOT BE REMOVED FROM DOFSTART
                 TS              SMODE                   # ***** MUST NOT BE REMOVED FROM DOFSTART
-                TS              DNLSTCOD                # SELECT P00 DOWNLIST
+                TS              DNLSTCOD                # SELECT POO DOWNLIST
                 TS              AGSWORD                 # ALLOW AGS INITIALIZATION
                 TS              UPSVFLAG                # ZERO UPDATE STATE VECTOR REQUEST FLAGWRD
                 EXTEND
@@ -100,7 +111,7 @@ DOFSTRT1        CA              PRIO30
                 CAF             MAXDB
                 TS              DB
                 CAF             FOUR
-                TS              RATEINDX                # INITIALZE KALCMANU RATE
+                TS              RATEINDX                # INITIALIZE KALCMANU RATE
                 CA              BOOLSTRT
                 TS              DAPBOOLS
                 CAF             EBANK6
@@ -147,7 +158,7 @@ DOFSTRT1        CA              PRIO30
                 EXTEND
                 DCA             SWINIT          +6
                 DXCH            STATE           +6
-                CA              OCT6200                 # CMOONFLAG, LMOONFLAG, SURFFLAG
+                CA              OCT6200                 # CMOONFLG, LMOONFLG, SURFFLAG
                 MASK            STATE           +8D
                 AD              SWINIT          +8D
                 TS              STATE           +8D
@@ -169,7 +180,7 @@ MR.KLEAN        INHINT
                 DXCH            -PHASE2
 
 ## Page 225
-P00KLEAN        EXTEND
+POOKLEAN        EXTEND
                 DCA             NEG0
                 DXCH            -PHASE4
 V37KLEAN        EXTEND
@@ -187,7 +198,7 @@ ABTKLEAN        EXTEND
                 TC              Q
 
 ## Page 226
-#          COMES HERE FROM LOCATION 4000, GOJAM, RESTART ANY PROGRAMS WHICH MAY HAVE BEEN RUNNING AT THE TIME.
+#          COMES HERE FROM LOCATION 4000, GOJAM, RESTART ANY PROGRAMS WHICH MAY HAVE BEEN RUNNING AT THE TIME
 
                 EBANK=          LST1
 GOPROG          INCR            REDOCTR                 # ADVANCE RESTART COUNTER.
@@ -202,10 +213,10 @@ GOPROG          INCR            REDOCTR                 # ADVANCE RESTART COUNTE
                 BZF             +4
                 AD              BIT6                    # SET ERROR COUNTER ENABLE
                 EXTEND
-                WOR             CHAN12                  # ISS WAS IN COARSE ALIGN SO GO BACK TO
+                WOR             CHAN12                  # ISS WAS IN COARS ALIGN SO GO BACK TO
 BUTTONS         TC              LIGHTSET
 
-#                                            ERASCHK TEMPORARILY STORES THE CONTENST OF TWO ERASABLE LOCATIONS, X
+#                                            ERASCHK TEMPORARILY STORES THE CONTENTS OF TWO ERASABLE LOCATIONS, X
 #                                            AND X+1 INTO SKEEP5 AND SKEEP6. IT ALSO STORES X INTO SKEEP7 AND
 #                                            ERESTORE. IF ERASCHK IS INTERRUPTED BY A RESTART, C(ERESTORE) SHOULD
 #                                            EQUAL C(SKEEP7),AND BE A + NUMBER LESS THAN 2000 OCT. OTHERWISE
@@ -270,7 +281,7 @@ ENEMA           INHINT
                 TCF             GOPROG2A
 GOPROG2         TC              STARTSB2
 GOPROG2A        TC              LIGHTSET
-                CS              INTFLBIT                # CLEAR INTEGER IN PROGRESS BIT
+                CS              INTFLBIT                # CLEAR INTEGR IN PROGRESS BIT
                 MASK            FLGWRD10
                 TS              FLGWRD10
 
@@ -298,7 +309,7 @@ PCLOOP          TS              MPAC            +5
 
                 CS              DIDFLBIT                # CLEAR DIDFLAG IN ORDER TO FORCE R10 TO
                 MASK            FLAGWRD1                # RE-INITIALIZE ITSELF IF IT HAD BEEN
-                TS              FLAGWRD1                # OPERATION AT THE TIME OF THE RESTART.
+                TS              FLAGWRD1                # OPERATIMG AT THE TIME OF THE RESTART.
 
                 CS              RODFLBIT                # CLEAR RODFLAG.  IF P66 IS IN OPERATION
                 MASK            FLAGWRD1                #      IT WILL RE-INITIALIZE ITSELF AND
@@ -319,7 +330,7 @@ NXTRST          TS              MPAC            +5
 PACTIVE         TS              MPAC
                 INCR            MPAC                    # ABS OF PHASE.
                 INCR            MPAC            +6      # INDICATE GROUP DEMANDS PRESENT.
-                CA              BANKCALL
+                TC              BANKCALL
                 CADR            RESTARTS
 PINACT          CCS             MPAC            +5      # PROCESS ALL RESTART GROUPS.
                 TCF             NXTRST
@@ -329,20 +340,21 @@ PINACT          CCS             MPAC            +5      # PROCESS ALL RESTART GR
                 CAF             BIT15                   # IS MODE -0
                 MASK            MODREG
                 EXTEND
-                BZF             CALGOP00                # NO
+                BZF             CALGOPOO                # NO
                 TCF             ENDRSTRT                # YES
 PTBAD           TC              ALARM                   # SET ALARM TO SHOW PHASE TABLE FAILURE.
                 OCT             1107
 
                 TCF             DOFSTRT1
 
+# ******** ****** ******
 ## Page 229
-# DO NOT USE GOPROG2 OR ENEMA WITHOUT CONSULTING P00H PEOPLE
+# DO NOT USE GOPROG2 OR ENEMA WITHOUT CONSULTING POOH PEOPLE
 
 OCT10000        =               BIT13
 OCT30000        =               PRIO30
-OCT6200         OCT             6200                    # SUFBIT, CMOONBIT, LOONBIT FOR SWINITS
-STIKSTRT        DEC             0.825268                # 20 D/S MAXIMUM COMPANDED RATE
+OCT6200         OCT             6200                    # SURFBIT, CMOONBIT, LMOONBIT FOR SWINITS
+STIKSTRT        DEC             0.825268                # 20 D/S MAXIMUM COMMANDED RATE
 RATESTRT        DEC             -218
 BOOLSTRT        OCT             21322
 60DEC           DEC             60
@@ -432,23 +444,23 @@ STARTSB2        CAF             OCT30001                # DURING SOFTWARE RESTAR
                 MASK            RADMODES
                 TS              RADMODES
                 CAF             OCT27470                # DURING SOFTWARE RESTART, DO NOT DISTURB
-                EXTEND                                  # IMU FLAGS. (COARSE ALIGN ENABLE, ZERO
+                EXTEND                                  # IMU FLAGS. (COURSE ALIGN ENABLE, ZERO
                 WAND            CHAN12                  # IMU CDUS, ENABLE IMU COUNTER) AND GIMBAL
                                                         # TRIM DRIVES. LEAVE RR LOCKON ENABLE
                                                         # ALONE.
 
-                CS              R12RDBIT                # R12RDFLAG CLEARED TO ESCAPE FROM POSSIBLE
+                CS              R12RDBIT                # R12RDFLG CLEARED TO ESCAPE FROM POSSIBLE
                 MASK            FLGWRD11                #  "CCS NEWJOB" LOOP IN VUPDAT SEC. OF R12
                 TS              FLGWRD11
 
-                CS              NORRMBIT                # ENABLE R25
+                CS              NORRMBIT                # ENABLE R25.
                 MASK            FLAGWRD5
                 TS              FLAGWRD5
 
                 CS              R77FLBIT                # CLEAR R77FLAG
                 MASK            FLAGWRD5
                 TS              FLAGWRD5
-                CAF             OCT74160                # DURING SOFTWARE RESTART, DO NOT DISTURB
+                CAF             OCT74160                # DURING SOFTWARE RESTART, DO NOT DUSTURB
                 EXTEND                                  # TELEMETRY FLAGS, RESET TRAP FLAGS, AND
                 WAND            CHAN13                  # ENABLE T6RUPT FLAG.
 
@@ -579,7 +591,7 @@ DSPOFF          TS              MPAC                    # R1, R2, R3).
                 CS              VD1
                 TS              DSPCOUNT
 
-                EXTEND                                  # SET UP JOB TO DO 1/ACCS AND TO ZERO
+                EXTEND                                  # SET UP A JOB TO DO 1/ACCS AND TO ZERO
                 QXCH            RUPTREG1                # THE OFFSET ACCELERATION ESTIMATE.
 
                 CAF             PRIO27
@@ -588,7 +600,7 @@ DSPOFF          TS              MPAC                    # R1, R2, R3).
                 2CADR           1/ACCSET
 
 
-                TC              RUPTREG1                # RETURN TO CALLER
+                TC              RUPTREG1                # RETURN TO CALLER.
 
 
                 EBANK=          AOSQ
@@ -627,7 +639,7 @@ SWINIT          OCT             0
                 OCT             40000                   # BIT 15 = LRBYPASS.
 
 ## Page 235
-# PROGRAM NAME    GOTOP00H                   ASSEMBLY       SUNDANCE
+# PROGRAM NAME    GOTOPOOH                   ASSEMBLY       SUNDANCE
 # LOG SECTION     FRESH START AND RESTART
 
 # FUNCTIONAL DESCRIPTION
@@ -636,7 +648,7 @@ SWINIT          OCT             0
 
 # INPUT/OUTPUT INFORMATION
 
-#       A. CALLING SEQUENCE        TC GOTOP00H
+#       A. CALLING SEQUENCE        TC GOTOPOOH
 
 #       B. ERASABLE INITIALIZATION       NONE
 
@@ -657,23 +669,23 @@ SWINIT          OCT             0
                 BANK
 
                 COUNT*          $$/P00
-GOTOP00H        CAF             OCT33                   # 4.33 SPOT FOR GOP00FIX
+GOTOPOOH        CAF             OCT33                   # 4.33 SPOT FOR GOPOOFIX
                 TS              L
                 COM
                 DXCH            -PHASE4
 
                 TC              POSTJUMP
-                CADR            GOP00FIX
+                CADR            GOPOOFIX
 OCT24           MM              20
 OCT31           MM              25
 
 
 
 
-CALGOP00        CAF             PRIO30
+CALGOPOO        CAF             PRIO30
                 TC              NOVAC
                 EBANK=          WHOCARES
-                2CADR           GOTOP00H
+                2CADR           GOTOPOOH
                 TC              POSTJUMP
                 CADR            DUMMYJOB        +2
 
@@ -683,7 +695,7 @@ CALGOP00        CAF             PRIO30
                 BANK
 
                 COUNT*          $$/P00                  # VERB 37 AND P00 IN BANK 4.
-GOP00FIX        TC              DOWNFLAG                # ALLOW X-AXIS OVERRIDE
+GOPOOFIX        TC              DOWNFLAG                # ALLOW X-AXIS OVERRIDE
                 ADRES           XOVINFLG
 
                 TC              DOWNFLAG                # INSURE THAT ULLAGE IS OFF
@@ -724,11 +736,11 @@ V37N99          VN              3799
 #             6. ALL RESTART GROUPS EXCEPT GROUP 2 ARE CLEARED. CONTROL ISTRANSFERRED TO RESTART PROGRAM (GOPROG2)
 #                WHICH CAUSES ALL CURRENT ACTIVITY TO BE DISCONTINUED AND A 9 MINUTE INTEGRATION CYCLE TO BE
 #                INITIATED.
-#          B. PROGRAM SELECTES IS P20 OR P25.
+#          B. PROGRAM SELECTED IS P20 OR P25.
 #             1. IF THE CURRENT MAJOR MODE IS THE SAME AS THE SELECTED NEWPROGRAM, THE PROGRAM IS RE-INITIALIZED
 #                VIA V37XEQ, ALL RESTART GROUPS, EXCEPT GROUP 4 ARE CLEARED.
 #             2. IF THE CURRENT MAJOR MODE IS NOT EQUAL TO THE NEW REQUEST, A CHECK IS MADE TO SEE IF THE REQUEST-
-#                ED MAJOR MODE HAS BEEN RUNNING THE BACKGROUND,
+#                ED MAJOR MODE HAS BEEN RUNNING IN THE BACKGROUND,
 #                AND IF IT HAS, NO NEW PROGRAM IS SCHEDULED, THE EXISTING
 #                P20 OR P25 IS RESTARTED TO CONTINUE, AND ITS M M IS SET.
 #             3. CONTROL IS TRANSFERRED TO GOPROG2.
@@ -751,7 +763,7 @@ V37N99          VN              3799
 #       C. OUTPUT
 
 ## Page 238
-#           MAJOR MOD CHANGE
+#           MAJOR MODE CHANGE
 
 #       D. DEBRIS
 #            MMNUMBER, MPAC +1, MINDEX, BASETEMP +C(MINDEX), FLAGWRD0, FLAGWRD1, FLAGWRD2, MODREG, GOLOC -1,
@@ -789,7 +801,7 @@ V37             TS              MMNUMBER                # SAVE MAJOR MODE
                 EXTEND
                 BZF             SETUP71                 # YES
 
-                CA              MMNUMBER                # IS NEW REQUEST P00
+                CA              MMNUMBER                # IS NEW REQUEST POO
                 EXTEND
                 BZF             ISSERVON                # YES, CHECK SERVICER STATUS
 
@@ -831,7 +843,7 @@ ISSERVON        CS              FLAGWRD7                # V37 FLAG SET - I.E. IS
                 INHINT
                 TC              IBNKCALL                # YES, TURN ENGINE OFF
                 CADR            ENGINOF1
-                TC              DOWNFLAG                # YES, TURN OFF THE AVERAGE G FLAG AND
+                TC              DOWNFLAG                # NOW TURN OFF THE AVERAGE G FLAG AND
                 ADRES           AVEGFLAG                # WAIT FOR SERVICER TO RETURN TO V37RET.
 
                 TC              KILLTASK
@@ -859,23 +871,23 @@ CANV37          CAF             ZERO
 
                 WRITE           SUPERBNK
 
-                CAF             R00AD
+                CAF             ROOAD
                 TS              TEMPFLSH
 
                 TC              PHASCHNG
                 OCT             14
 
-R00             TC              INTPRET
+ROO             TC              INTPRET
 
                 CALL                                    # WAIT FOR INTEGRATION TO FINISH
                                 INTSTALL
 DUMMYAD         EXIT
 
                 TC              DOWNFLAG
-                ADRES           3AXISFLG                # RESET 3-AXIT FLAG
+                ADRES           3AXISFLG                # RESET 3-AXIS FLAG
 
                 TC              DOWNFLAG
-                ADRES           P00HFLAG
+                ADRES           POOHFLAG
 
                 TC              DOWNFLAG                # CLEAR FOR NORMAL INFLIGHT MARKING
                 ADRES           FLT59FLG
@@ -897,10 +909,10 @@ DUMMYAD         EXIT
 
                 TC              DOWNFLAG                # ALLOW X-AXIS OVERRIDE.
                 ADRES           XOVINFLG
-                CCS             MMNUMBER                # IS THIS A P00H REQUEST
+                CCS             MMNUMBER                # IS THIS A POOH REQUEST
                 TCF             NOUVEAU                 # NO, PICK UP NEW PROGRAM
 
-P00H            TC              RELDSP                  # RELEASE DISPLAY SYSTEM
+POOH            TC              RELDSP                  # RELEASE DISPLAY SYSTEM
 
                 CAF             PRIO5                   # SET VARIABLE RESTART PRIORITY FOR
                 TS              PHSPRDT2                # P00 INTEGRATION.
@@ -912,7 +924,7 @@ P00H            TC              RELDSP                  # RELEASE DISPLAY SYSTEM
                 MASK            FLAGWRD2
                 TS              FLAGWRD2
 
-                CA              FIVE                    # SET RESTART FOR STATINT1
+                CA              FIVE                    # SET RESTART FOR STATEINT1
                 TS              L
                 COM
                 DXCH            -PHASE2
@@ -923,7 +935,7 @@ P00H            TC              RELDSP                  # RELEASE DISPLAY SYSTEM
 
                 CAF             DNLADP00
 
-SEUDOP00        TS              DNLSTCOD                # SET UP APPROPRIATE DOWNLIST CODE
+SEUDOPOO        TS              DNLSTCOD                # SET UP APPROPRIATE DOWNLIST CODE
                 TS              AGSWORD                 #  (CURRENT LIST WILL BE COMPLETED BEFORE
                                                         #   NEW ONE IS STARTED)
 
@@ -932,7 +944,7 @@ SEUDOP00        TS              DNLSTCOD                # SET UP APPROPRIATE DOW
                 AD              NOP07BIT
                 TS              FLAGWRD3
 
-                TC              IBNKCALL                # INSLURE ALLCOAST.
+                TC              IBNKCALL                # INSURE ALLCOAST.
                 CADR            ALLCOAST                # DOES A RESTORDB.
 
                 CS              OCT120                  # TURN OFF TRACK, UPDATE FLAGS
@@ -943,10 +955,10 @@ SEUDOP00        TS              DNLSTCOD                # SET UP APPROPRIATE DOW
                 TC              IBNKCALL                # KILL GROUPS 1,3,5,6
                 CADR            V37KLEAN
 
-                CCS             MMNUMBER                # IS IT P00H
+                CCS             MMNUMBER                # IS IT POOH
                 TCF             RENDV00                 # NO
 GOMOD           TC              IBNKCALL                # REDUNDANT EXCEPT FOR GROUP 4
-                CADR            P00KLEAN
+                CADR            POOKLEAN
 
                 CA              MMNUMBER
                 TS              MODREG
@@ -968,15 +980,15 @@ RENDV00         CS              MODREG                  # IS CURRENT PROGRAM 22
 
                 AD              NEG2                    # IS NEW PROGRAM = P20 OR P25
                 EXTEND
-                BZF             RENDN00                 # YES
+                BZF             RENDNOO                 # YES
                 AD              FIVE                    # 25
                 EXTEND
-                BZF             RENDN00                 # YES
+                BZF             RENDNOO                 # YES
 
                 CA              OCT500                  # NO, IS EITHER P20 OR P25 RUNNING
                 MASK            FLAGWRD0
                 CCS             A
-                TCF             P00FIZZ                 # YES, LEAVE GROUP 2 TO PICK UP P20 OR P25
+                TCF             POOFIZZ                 # YES, LEAVE GROUP 2 TO PICK UP P20 OR P25
 
 RESET22         CS              OCT700                  # CLEAR RENDEZVOUS,P25
                 MASK            FLAGWRD0                # AND IMU IN USE FLAGS
@@ -987,12 +999,12 @@ KILL2           EXTEND                                  # NO, KILL 2
                 DCA             NEG0
                 DXCH            -PHASE2
 
-P00FIZZ         CAF             V37QCAD                 # RESTART POINT FOR V37XEQ
+POOFIZZ         CAF             V37QCAD                 # RESTART POINT FOR V37XEQ
                 TS              TEMPFLSH
 
                 TCF             GOGOPROG
 
-RENDN00         CS              MODREG
+RENDNOO         CS              MODREG
                 AD              OCT24
                 EXTEND
                 BZF             KILL2                   # P20 OR P25 ON TOP OF P20 OR P25 -
@@ -1029,10 +1041,10 @@ NOUVEAU         CAF             OCT500                  # IS P20 OR P25 FLAG SET
                 ADRES           IMUSE
 
                 INDEX           MINDEX
-                CAF             DNLADMM1                # OBTAIN APPROPIRATE DOWNLIST ADDRESS
+                CAF             DNLADMM1                # OBTAIN APPROPRIATE DOWNLIST ADDRESS
 
                 INHINT
-                TCF             SEUDOP00
+                TCF             SEUDOPOO
 
 V37NONO         TC              FALTON                  # COME HERE IF MM REQUESTED DOESNT EXIST
 
@@ -1063,9 +1075,9 @@ V37XEQ          INHINT
 
                 INDEX           MINDEX
 
-# Page 244
+## Page 244
                 CAF             FCADRMM1
-                TS              BASETEMP                # MAKE BBCON BY ADDING HI5 OR FCADR
+                TS              BASETEMP                # MAKE BBCON BY ADDING HI5 OF FCADR
                 MASK            HI5
                 ADS             L
 
@@ -1087,7 +1099,7 @@ NEG7            EQUALS          OCT77770
 MMTEMP          EQUALS          PHSPRDT3
 BASETEMP        EQUALS          TBASE4
 V37QCAD         CADR            V37XEQ          +3
-R00AD           CADR            DUMMYAD
+ROOAD           CADR            DUMMYAD
 OCT37667        OCT             37667
 OCT40072        OCT             40072
 OCT700          OCT             700
@@ -1111,12 +1123,12 @@ P70CADR         2CADR           P70
 #          THE FCADRMM TABLE CONTAINS THE FCADR OF THE STARTING JOB OF
 # THE MAJOR MODE.   FOR EXAMPLE,
 
-#                                         FCADRMM1 FCADR   P79             # START OF P 79
-#                                                  FCADR   PROG18          # START OF P 18
+#                                         FCADRMM1 FCADR   P79             START OF P 79
+#                                                  FCADR   PROG18          START OF P 18
 
 ## Page 245
-#                                                  FCADR   P01             # START OF P 01
-# NOTE.    THE FIRST ENTRY MUST BE LABELED FCADRMM1.
+#                                                  FCADR   P01             START OF P 01
+# NOTE.    THE FIRST ENTRY MUST BE LABLED FCADRMM1.
 # ----
 
 FCADRMM1        EQUALS
@@ -1245,7 +1257,7 @@ LUNRSALN        =               5
 
                 EBANK=          RRECTCSM
 
-# THIS ROUTINE DOES THE P00 INTEGRATION
+# THIS ROUTINE DOES THE POO INTEGRATION
 
 STATEUP         SET             BOF                     # EXTRAPOLATE CM STATE VECTOR
                                 VINTFLAG

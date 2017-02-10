@@ -1,16 +1,19 @@
 ### FILE="Main.annotation"
-## Copyright:    Public domain.
-## Filename:     KALCMANU_STEERING.agc
-## Purpose:      A module for revision 0 of BURST120 (Sunburst). It 
-##               is part of the source code for the Lunar Module's
-##               (LM) Apollo Guidance Computer (AGC) for Apollo 5.
-## Assembler:    yaYUL
-## Contact:      Ron Burkey <info@sandroid.org>.
-## Website:      www.ibiblio.org/apollo/index.html
-## Mod history:  2016-09-30 RSB  Created draft version.
-##               2016-10-22 MAS  Transcribed.
-##		 2016-10-31 RSB	 Typos.
-##		 2016-11-01 RSB	 More typos.
+## Copyright:   Public domain.
+## Filename:    KALCMANU_STEERING.agc
+## Purpose:     A module for revision 0 of BURST120 (Sunburst). It 
+##              is part of the source code for the Lunar Module's
+##              (LM) Apollo Guidance Computer (AGC) for Apollo 5.
+## Assembler:   yaYUL
+## Contact:     Ron Burkey <info@sandroid.org>.
+## Website:     www.ibiblio.org/apollo/index.html
+## Mod history: 2016-09-30 RSB  Created draft version.
+##              2016-10-22 MAS  Transcribed.
+##		2016-10-31 RSB	Typos.
+##		2016-11-01 RSB	More typos.
+##		2016-12-06 RSB	Comments proofed using octopus/ProoferComments,
+##				no changes made.
+##		2017-01-28 RSB	WTIH -> WITH.
 
 ## Page 668
 # GENERATION OF STEERING COMMANDS FOR DIGITAL AUTOPILOT FREE FALL MANEUVERS
@@ -65,7 +68,7 @@ INCRDCDU        TS              SPNDX
                 TCF             INCRDCDU                        # LOOP FOR THREE AXES
 
 ## Page 669
-# COMPARE PRESENT TIME WTIH TIME TO TERMINATE MANEUVER
+# COMPARE PRESENT TIME WITH TIME TO TERMINATE MANEUVER
 
 TMANUCHK        EXTEND                                          
                 DCS             TIME2                           

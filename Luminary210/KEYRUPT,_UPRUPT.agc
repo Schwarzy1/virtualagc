@@ -1,5 +1,6 @@
 ### FILE="Main.annotation"
 ## Copyright:   Public domain.
+## Filename:    KEYRUPT,_UPRUPT.agc
 ## Purpose:     A section of Luminary revision 210.
 ##              It is part of the source code for the Lunar Module's (LM)
 ##              Apollo Guidance Computer (AGC) for Apollo 15-17.
@@ -13,6 +14,10 @@
 ## Website:     www.ibiblio.org/apollo/index.html
 ## Mod history: 2016-11-17 JL   Created from Luminary131 version.
 ##              2016-11-23 AS   Transcribed
+##              2016-11-27 HG   fix opcode  CSS   ->  CCS
+##                                  operand lOW5  ->  LOW5 
+##		2016-12-26 RSB	Comment-text proofed using ProoferComments
+##				and corrected errors found.
 
 
 ## Page 1335
@@ -41,7 +46,7 @@ ACCEPTUP        CAF                     CHRPRIO         # (NOTE: RUPTREG4 = KEYT
 
                 CA                      RUPTREG4
                 INDEX                   LOCCTR
-                TS                      MPAC            # LEAVE 5 BIT KEY CODE IN MPAC FOR CHARIN
+                TS                      MPAC            # LEAVE 5 BIT KEY CDE IN MPAC FOR CHARIN
                 TC                      RESUME
 
 ## Page 1336
@@ -56,7 +61,7 @@ UPRUPT          TS                      BANKRUPT
                 TS                      KEYTEMP1
                 CA                      FLAGWRD3        # AFTER EARTH LAUNCH?
                 MASK                    NOP07BIT
-                CSS                     A
+                CCS                     A
                 TCF                     UPRPT1          # YES
                 CA                      KEYTEMP1        # NO: SUM UPLINK DATA
                 ADS                     UPSUM
@@ -64,7 +69,7 @@ UPRUPT          TS                      BANKRUPT
 UPRPT1          CAF                     BIT3            # TURN ON UPACT LIGHT
                 EXTEND                                  # (BIT 3 OF CHANNEL 11)
                 WOR                     DSALMOUT
-                CAF                     lOW5            # TEST FOR TRIPLE CHAR REDUNDANCY
+                CAF                     LOW5            # TEST FOR TRIPLE CHAR REDUNDANCY
                 MASK                    KEYTEMP1        # LOW5 OF WORD
                 XCH                     KEYTEMP1        # LOW5 INTO KEYTEMP1
                 EXTEND
@@ -120,7 +125,7 @@ ELRCODE         OCT                     22
 # THIS INDICATION WILL BE TRANSFERRED TO THE GROUND BY THE DOWNLINK WHICH DOWNLINKS ALL FLAGWORDS.
 # WHEN UPLINK ACTIVITY IS LOCKED OUT ,IT CAN BE ALLOWED WHEN THE GROUND UPLINKS AND 'ERROR RESET' CODE.
 # (IT IS RECOMMENDED THAT THE 'ERROR LIGHT RESET' CODE IS PRECEEDED BY 16 BITS THE FIRST OF WHICH IS 1 FOLLOWED
-# BY 15 ZEROS.  THIS WILL ELIMINATE EXTRANEOUS BITS FROM INLINK WHICH MAY HAVE BEEN LEFT OVER FROM THE ORIGINAL
-# FAILURE).
+# BY 15 ZEROES. THIS WILL ELIMINATE EXTRANEOUS BITS FROM INLINK WHICH MAY HAVE BEEN LEFT OVER FROM THE ORIGINAL
+# FAILURE)
 #
 # UPLINK ACTIVITY IS ALSO ALLOWED(UNLOCKED) DURING FRESH START WHEN FRESH START SETS BIT4 OF FLAGWRD7 = 0.

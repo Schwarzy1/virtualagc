@@ -11,6 +11,10 @@
 ##              2016-10-16 MAS  Began transcription.
 ##              2016-10-17 MAS  Completed transcribing/disassembling/reconstructing. There are gaps in
 ##                              comments, but instruction-wise it should be pretty close.
+##		2016-12-06 RSB	Comments proofed using octopus/ProoferComments,
+##				changes made, though the general quality of the printout in this
+##				section makes this a less-convincing procedure than it would normally
+##				be.
 
 ## Page 815
 # **SERVICER ROUTINES**
@@ -259,11 +263,11 @@ PIPCHECK        TS              PIPCTR
                 INDEX           A
 ## The next 10 lines were printed on only 2. I'm not sure the exact distribution, but it seems likely that they
 ## were split evenly between the two. They were disassembled from the octal section, with help from the symbol
-## table. For the first line, I have chosen DELVX rathern than DELV to match SERVICER207 in Colossus 237.
+## table. For the first line, I have chosen DELVX rather than DELV to match SERVICER207 in Colossus 237.
 ## Fragments of comments were also printed on the second line. They read:
 ## "   O UE    T [DP] [P.]      M"
 ## where characters in brackets were printed on top of each other. In place of the original comments, I have 
-## transplanted comments from the SERVICER207 section of Colossus 237, which closely mirros this. They roughly
+## transplanted comments from the SERVICER207 section of Colossus 237, which closely mirrors this. They roughly
 ## align with the the above string, and so are likely close to correct.
                 CCS             DELVX
                 TC              +2
@@ -414,7 +418,7 @@ BOOSTMON        CS              ABDELV                  # COMPARE ABDELV TO THRS
                 CAF             PRIO20
                 TC              NOVAC                   # SET UP MISSION PHASE 6 JOB
                 EBANK=          BMEMORY
-                2CADR           MP6JOB
+                2CADR           MP6JOB			# NO VAC AREA NEEDED
 
                 TC              PHASCHNG
 ## The following line was not printed. It was taken from the octal listing and matches other PHASCHNG calls.
@@ -502,8 +506,10 @@ GTHRSHLD        DEC             60                      # APPROXIMATELY 60 LBS T
 
 ## Page 826
 ## The following two lines were printed on top of each other. The first is a line comment which didn't quite
-## make it through. I've done my best to pick it out from behind the other characters.
-#     ROO   IN       O    RMINA    R ADACES AND AV RAGE G
+## make it through. I've done my best to pick it out from behind the other characters.<br>
+## <pre>
+##     ROO   IN       O    RMINA    R ADACES AND AV RAGE G
+## </pre>
                 EBANK=          DVTOTAL
 AVGEND          CA              PIPTIME         +1      # FINAL AVERAGE G EXIT
 ## The following line was not printed. It was instead taken from a picture of SHEPATIN rev 0 provided by Don Eyles,
@@ -557,7 +563,7 @@ NORMLIZE        INHINT
 ## End of disassembled instructions.
 
                 EXTEND
-## The follwing five lines were all printed on one. They have been disassembled from the octal listing. Enough of
+## The following five lines were all printed on one. They have been disassembled from the octal listing. Enough of
 ## a comment made it through for me to be able to tell what line it was for (SAVE something TIME FOR DOWNLINK).
                 DCA             TAVEGON
                 DXCH            STATIME                 # S A     IM  F R  DWNLINK

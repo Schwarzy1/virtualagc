@@ -21,6 +21,10 @@
   Purpose:      Assembles the SETLOC pseudo-op.
   Mode:         04/17/03 RSB.   Began.
                 07/24/04 RSB.   Now allow offsets.
+                12/18/16 MAS.   Added support for relative arguments
+                                (eg. SETLOC +2)
+                01/27/17 MAS.   Added support for Raytheon-style
+                                absolute addresses (eg. FF024000)
  */
 
 #include "yaYUL.h"
@@ -47,22 +51,50 @@ int ParseSETLOC(ParseInput_t *InRecord, ParseOutput_t *OutRecord)
 
     i = GetOctOrDec(InRecord->Operand, &Value);
     if (!i) {
-        // What we've found here is that a constant, like 04000, is the
-        // operand of the SETLOC pseudo-op.  I don't really know what is
-        // supposed to be done with this in general.  (I've seen
-        // `SETLOC 04000' in the source code, but I don't know if there
-        // are others.)  I'm going to ASSUME that the operand is a
-        // full 16-bit pseudo-address, and I'm going to choose the best
-        // memory type based on that assumption.
-        PseudoToSegmented(Value, OutRecord);
+        if (InRecord->Operand[0] == '+' || InRecord->Operand[0] == '-') {
+            // This is a relative SETLOC or LOC. Change the PC by the requested
+            // value.
+            IncPc(&OutRecord->ProgramCounter, Value, &OutRecord->ProgramCounter);
+        } else {
+            // What we've found here is that a constant, like 04000, is the
+            // operand of the SETLOC pseudo-op.  I don't really know what is
+            // supposed to be done with this in general.  (I've seen
+            // `SETLOC 04000' in the source code, but I don't know if there
+            // are others.)  I'm going to ASSUME that the operand is a
+            // full 16-bit pseudo-address, and I'm going to choose the best
+            // memory type based on that assumption.
+            PseudoToSegmented(Value, OutRecord);
+        }
     } else {
         Symbol = GetSymbol(InRecord->Operand);
         if (!Symbol) {
-            sprintf(OutRecord->ErrorMessage, "Symbol \"%s\" undefined or offset bad", InRecord->Operand);
-            OutRecord->Fatal = 1;
-            OutRecord->ProgramCounter.Invalid = 1;
-        } else
+            char MemType;
+            int Bank, SReg;
+            int RaytheonAddr = 0;
+            if (3 == sscanf(InRecord->Operand, "%cF%2o%4o", &MemType, &Bank, &SReg)) {
+                if (MemType == 'C' || MemType == 'F') {
+                    OutRecord->ProgramCounter = VALID_ADDRESS;
+                    OutRecord->ProgramCounter.Address = 1;
+                    OutRecord->ProgramCounter.Fixed = 1;
+                    OutRecord->ProgramCounter.SReg = SReg;
+                    if (MemType == 'C') {
+                        OutRecord->ProgramCounter.Banked = 1;
+                        OutRecord->ProgramCounter.FB = Bank;
+                    } else {
+                        OutRecord->ProgramCounter.Unbanked = 1;
+                    }
+                    RaytheonAddr = 1;
+                }
+            }
+
+            if (!RaytheonAddr) {
+                sprintf(OutRecord->ErrorMessage, "Symbol \"%s\" undefined or offset bad", InRecord->Operand);
+                OutRecord->Fatal = 1;
+                OutRecord->ProgramCounter.Invalid = 1;
+            }
+        } else {
             OutRecord->ProgramCounter = Symbol->Value;
+        }
     }
 
     i = GetOctOrDec(InRecord->Mod1, &Value);
