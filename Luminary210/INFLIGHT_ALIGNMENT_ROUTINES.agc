@@ -1,5 +1,6 @@
 ### FILE="Main.annotation"
 ## Copyright:   Public domain.
+## Filename:    INFLIGHT_ALIGNMENT_ROUTINES.agc
 ## Purpose:     A section of Luminary revision 210.
 ##              It is part of the source code for the Lunar Module's (LM)
 ##              Apollo Guidance Computer (AGC) for Apollo 15-17.
@@ -7,14 +8,14 @@
 ##              that the code format has been changed to conform to the
 ##              requirements of the yaYUL assembler rather than the
 ##              original YUL assembler.
-## Reference:   pp. XXX-XXX
+## Reference:   pp. 1246-1255
 ## Assembler:   yaYUL
 ## Contact:     Ron Burkey <info@sandroid.org>.
 ## Website:     www.ibiblio.org/apollo/index.html
 ## Mod history: 2016-11-17 JL   Created from Luminary131 version.
-
-## NOTE: Page numbers below have yet to be updated from Luminary131 to Luminary210!
-
+##		2016-12-07 RRB	Updated for Luminary210.
+##		2016-12-26 RSB	Comment-text proofed using ProoferComments
+##				and corrected errors found.
 
 ## Page 1246
 		BANK	22
@@ -28,7 +29,7 @@
 # THE INPUT IS THE DESIRED STABLE MEMBER COORDINATES REFERRED TO PRESENT STABLE MEMBER COORDINATES.  THE THREE
 # HALF-UNIT VECTORS ARE STORED AT XDC, YDC, AND ZDC.
 #
-# THE OUTPUTS ARE THE THREE GYRO TORQUE ANGLES TO BE APPLIED TO THE Y, Z, AND X GYROS AND ARE STORED DP AT IGC,
+# THE OUTPUTS ARE THE THREE GYRO TORQUING ANGLES TO BE APPLIED TO THE Y, Z, AND X GYROS AND ARE STORED DP AT IGC,
 # MGC, AND OGC RESPECTIVELY.
 
 		COUNT*	$$/INFLT
@@ -129,7 +130,7 @@ TRIG2		DLOAD	SIGN		# (135,-135)
 # CALCGA COMPUTES THE CDU DRIVING ANGLES REQUIRED TO BRING THE STABLE MEMBER INTO THE DESIRED ORIENTATION.
 #
 # THE INPUTS ARE  1) THE NAVIGATION BASE COORDINATES REFERRED TO ANY COORDINATE SYSTEM.  THE THREE HALF-UNIT
-# VECTORS ARE STORED AT XNB, YNB, AND ZNB.  2) THE DESIRED STABLE MEMBER COORDINATES REFERRED TO THE SAME
+# VECTORS ARE STORED AT XNB,YNB, AND ZNB.  2) THE DESIRED STABLE MEMBER COORDINATES REFERRED TO THE SAME
 # COORDINATE SYSTEM ARE STORED AT XSM, YSM, AND ZSM.
 #
 # THE OUTPUTS ARE THE THREE CDU DRIVING ANGLES AND ARE STORED SP AT THETAD, THETAD +1, AND THETAD +2.
@@ -190,7 +191,7 @@ CALCGA1		VLOAD	DOT
 GIMLOCK1	EXIT
 		TC	ALARM
 		OCT	00401
-		TC	UPFLAG		# GIMBAL LOCK HAS OCCURRED
+		TC	UPFLAG		# GIMBAL LOCK HAS OCCURED
 		ADRES	GLOKFAIL
 
 		TC	INTPRET
@@ -216,16 +217,16 @@ AXISGEN		AXT,1	SSP		# PUSHDOWN 00-30D, 34D-37D
 		SETPD
 			0
 AXISGEN1	VLOAD*	VXV*		# 06D	UA = S1
-			STARAD +12D,1	#	STARAD +00D	UB = S1
+			STARAD +12D,1	#	 STARAD +00D	UB = S1
 			STARAD +18D,1
 		UNIT			# 12D	VA = UNIT(S1 X S2)
-		STORE	STARAD +18D,1	#	STARAD +06D	VB = UNIT(S1 X S2)
+		STORE	STARAD +18D,1	#	 STARAD +06D	VB = UNIT(S1 X S2)
 		VLOAD*
 			STARAD +12D,1
 
 		VXV*	VSL1
 			STARAD +18D,1	# 18D	WA = UA X VA
-		STORE	STARAD +24D,1	#	STARAD +12D	WB = UB X VB
+		STORE	STARAD +24D,1	#	 STARAD +12D	WB = UB X VB
 
 		TIX,1
 			AXISGEN1
@@ -286,4 +287,4 @@ QTSN45		2DEC	.1768
 .166...		2DEC	.1666666667
 
 ## Page 1255
-# (There is no source code on this page of the original assembly listing.)
+## There is no source code on this page of the original assembly listing.

@@ -1,5 +1,6 @@
 ### FILE="Main.annotation"
 ## Copyright:   Public domain.
+## Filename:    PHASE_TABLE_MAINTENANCE.agc
 ## Purpose:     A section of Luminary revision 210.
 ##              It is part of the source code for the Lunar Module's (LM)
 ##              Apollo Guidance Computer (AGC) for Apollo 15-17.
@@ -13,6 +14,9 @@
 ## Website:     www.ibiblio.org/apollo/index.html
 ## Mod history: 2016-11-17 JL   Created from Luminary131 version.
 ##              2016-11-18 MAS  Transcribed.
+##              2016-11-27 HG   fix operand  PHASETAB1 -> PHASTAB1
+##		2016-12-26 RSB	Comment-text proofed using ProoferComments
+##				and corrected errors found.
 
 ## Page 1291
 #          SUBROUTINE TO UPDATE THE PROGRAM NUMBER DISPLAY ON THE DSKY.
@@ -43,7 +47,7 @@ CHECKMM		INDEX	Q
 
 TCQ		=	Q+2 +1
 
-		SETLOC	PHASETAB1
+		SETLOC	PHASTAB1
 		BANK
 
 		COUNT*	$$/PHASE
@@ -87,7 +91,7 @@ DSPMMJOB	EQUALS	DSPMMJB
 # WHERE EACH LETTER OR NUMBER STANDS FOR A BIT.  THE G:S STAND FOR THE GROUP, OCTAL 1 - 7, THE P:S FOR THE PHASE,
 # OCTAL 0 - 127.  0:S MUST BE 0.              IF ONE WISHES TO HAVE THE TBASE OF GROUP G TO BE SET AT THIS TIME,
 # T IS SET TO 1, OTHERWISE IT IS SET TO 0.  SIMIARLY IF ONE WISHES TO SET LONGBASE, THEN L IS SET TO 1, OTHERWISE
-# IT IS SET TO 0.  SOME EXAMLES,
+# IT IS SET TO 0.  SOME EXAMPLES,
 
 #                                                  TC     PHASCHNG        THIS WILL CAUSE GROUP 3 TOBE SET TO 0,
 #                                                  OCT    00003           MAKING GROUP 3 INACTIVE
@@ -190,7 +194,7 @@ DSPMMJOB	EQUALS	DSPMMJB
 # DIFFERENCE --- NOTE- IF LONGBASE IS TO BE SET THIS INFORMATION IS GIVEN IN THE OCT YYYYY INFORMATION, IT WILL
 # BE DISREGARDED IF GIVEN WITH THE OCT XXXXX INFORMATION. A COUPLE OF EXAMPLES MAY HELP,
 
-#                                         AD       TC     2PHACHNG        SET TBASE3 AND IF A RESTART OCCURS START
+#                                         AD       TC     2PHSCHNG        SET TBASE3 AND IF A RESTART OCCURS START
 #                                         AD+1     OCT    40083           THE TWO ENTRIES IN 3.8 TABLE LOCATION
 #                                         AD+2     OCT    05025           THIS IS OF TYPE C, SET THE JOB TO BE
 #                                         AD+3     OCT    18000           TO BE LOCATION AD+4, WITH A PRIORITY 18,
@@ -198,7 +202,6 @@ DSPMMJOB	EQUALS	DSPMMJB
 
 ## [WORKAROUND] RSB 2004
 		SBANK=	PINSUPER
-## [WORKAROUND]
 
 		COUNT*	$$/PHASE
 2PHSCHNG	INHINT			# THE ENTRY FOR A DOUBLE PHASE CHANGE

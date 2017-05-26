@@ -1,5 +1,6 @@
 ### FILE="Main.annotation"
 ## Copyright:   Public domain.
+## Filename:    INTERRUPT_LEAD_INS.agc
 ## Purpose:     A section of Luminary revision 210.
 ##              It is part of the source code for the Lunar Module's (LM)
 ##              Apollo Guidance Computer (AGC) for Apollo 15-17.
@@ -13,9 +14,8 @@
 ## Website:     www.ibiblio.org/apollo/index.html
 ## Mod history: 2016-11-17 JL   Created from Luminary131 version.
 ##              2017-11-20 HG   Transcribed
-
-## NOTE: Page numbers below have yet to be updated from Luminary131 to Luminary210!
-
+##		2016-12-23 RSB	Proofed comment text with octopus/ProoferComments
+##				and fixed all errors found.
 
 ## Page 163
                 SETLOC          4000
@@ -31,7 +31,7 @@
                 DCA             T6ADR
                 DTCB
 
-                DXCH            ARUPT                   # T5RUPT -- AUTOPILOT
+                DXCH            ARUPT                   # T5RUPT - AUTOPILOT
                 EXTEND
                 DCA             T5ADR
                 DTCB

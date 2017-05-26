@@ -1,5 +1,5 @@
 /*
- * Copyright 2003-2005,2009,2016 Ronald S. Burkey <info@sandroid.org>
+ * Copyright 2003-2005,2009,2016-2017 Ronald S. Burkey <info@sandroid.org>
  *
  * This file is part of yaAGC.
  *
@@ -100,6 +100,17 @@
  *                              It *almost* works, but not quite yet.
  *              2016-11-14 RSB  Added the '#>' construct in .yul files.  Added
  *                              --to-yul.
+ *              2016-12-18 MAS  Added the "LOC" alias for SETLOC. Also altered
+ *                              processing of numeric opcodes, determining if
+ *                              a double-word operation is being assembled, and incrementing
+ *                              the operand if so. This is needed for a word in the Retread
+ *                              instruction checks.
+ *              2017-01-05 RSB  Added BBCON* as distinct from BBCON.
+ *              2017-01-27 MAS  Added "MSK" as an alias for "MASK", as supported by the
+ *                              Raytheon assembler.
+ *              2017-01-30 MAS  Added an array to store parity bites calculated on the fly,
+ *                              for use with --hardware.
+ *              2017-02-05 MAS  Added BBCON* handling to BLK2 as well.
  *
  * I don't really try to duplicate the formatting used by the original
  * assembly-language code, since that format was appropriate for
@@ -162,6 +173,7 @@ static int NumFields = 0;
 
 char *assemblyTarget = "AGC4";
 int Block1 = 0;
+int Raytheon = 0;
 int blk2 = 0;
 int Html = 0;
 FILE *HtmlOut = NULL;
@@ -227,7 +239,7 @@ static ParserMatch_t ParsersBlock2[] =
     { "BLOCK", OP_PSEUDO, ParseBLOCK },
     { "BBCON", OP_PSEUDO, ParseBBCON },
   /*{ "BBCON*", OP_PSEUDO, NULL, "OCT", "66100" },*/
-    { "BBCON*", OP_PSEUDO, ParseBBCON },
+    { "BBCON*", OP_PSEUDO, ParseBBCONstar },
     { "BNKSUM", OP_PSEUDO, NULL, "", "" },
     { "BZF", OP_BASIC, ParseBZF },
     { "BZMF", OP_BASIC, ParseBZMF },
@@ -269,6 +281,7 @@ static ParserMatch_t ParsersBlock2[] =
     { "INHINT", OP_BASIC, NULL, "TC", "$4" },
     { "LXCH", OP_BASIC, ParseLXCH },
     { "MASK", OP_BASIC, ParseMASK },
+    { "MSK", OP_BASIC, ParseMASK },
     { "MEMORY", OP_PSEUDO, NULL, "", "" },
     { "MM", OP_PSEUDO, ParseDEC },
     { "MP", OP_BASIC, ParseMP },
@@ -316,7 +329,7 @@ static ParserMatch_t ParsersBlock2[] =
 #define NUM_PARSERS_BLOCK2 (sizeof (ParsersBlock2) / sizeof (ParsersBlock2[0]))
 
 // This is the table of basic instructions for BLK2.  It is almost
-// identical to ParsersBlock2[], but look at STORE, STODL, STOVL, STCALL.
+// identical to ParsersBlock2[], but look at STORE, STODL, STOVL, STCALL, LOC.
 static ParserMatch_t ParsersBLK2[] =
   {
     { "-1DNADR", OP_DOWNLINK, ParseECADR, "", "", 0, 077777 },
@@ -353,7 +366,7 @@ static ParserMatch_t ParsersBLK2[] =
     { "BLOCK", OP_PSEUDO, ParseBLOCK },
     { "BBCON", OP_PSEUDO, ParseBBCON },
   /*{ "BBCON*", OP_PSEUDO, NULL, "OCT", "66100" },*/
-    { "BBCON*", OP_PSEUDO, ParseBBCON },
+    { "BBCON*", OP_PSEUDO, ParseBBCONstar },
     { "BNKSUM", OP_PSEUDO, NULL, "", "" },
     { "BZF", OP_BASIC, ParseBZF },
     { "BZMF", OP_BASIC, ParseBZMF },
@@ -393,6 +406,7 @@ static ParserMatch_t ParsersBLK2[] =
     { "INCR", OP_BASIC, ParseINCR },
     { "INDEX", OP_BASIC, ParseINDEX },
     { "INHINT", OP_BASIC, NULL, "TC", "$4" },
+    { "LOC", OP_PSEUDO, ParseSETLOC },
     { "LXCH", OP_BASIC, ParseLXCH },
     { "MASK", OP_BASIC, ParseMASK },
     { "MEMORY", OP_PSEUDO, NULL, "", "" },
@@ -1194,6 +1208,7 @@ static int NUM_INTERPRETERS = NUM_INTERPRETERS_BLOCK2;
 
 // Buffer for binary data.
 int ObjectCode[044][02000];
+unsigned char Parities[044][02000];
 
 int NumInterpretiveOperands = 0, RawNumInterpretiveOperands;
 int nnnnFields[4];
@@ -1443,6 +1458,7 @@ int
 Pass(int WriteOutput, const char *InputFilename, FILE *OutputFile, int *Fatals,
     int *Warnings)
 {
+  void SaveUsedCounts(void);
   int yulType = 0;
   int IncludeDirective;
   ParserMatch_t *Match;
@@ -1461,6 +1477,7 @@ Pass(int WriteOutput, const char *InputFilename, FILE *OutputFile, int *Fatals,
   static char lastLines[10][sizeof(s)] =
     { "", "", "", "", "", "", "", "", "", "" };
 
+  SaveUsedCounts();
   isEstablishedSBANK = 1;
   thisIsTheLastPass = WriteOutput;
   numSymbolsReassigned = 0;
@@ -1496,7 +1513,10 @@ Pass(int WriteOutput, const char *InputFilename, FILE *OutputFile, int *Fatals,
 
   for (i = 0; i < 044; i++)
     for (j = 0; j < 02000; j++)
-      ObjectCode[i][j] = 0;
+      {
+        ObjectCode[i][j] = 0;
+        Parities[i][j] = 0;
+      }
 
   // Open the input file.
   strcpy(CurrentFilename, InputFilename);
@@ -1966,7 +1986,7 @@ Pass(int WriteOutput, const char *InputFilename, FILE *OutputFile, int *Fatals,
       if (NULL == ParseInputRecord.Operand || 0 == ParseInputRecord.Operand[0])
         {
           if (!strcmp(ParseInputRecord.Operator, "TC")
-              || !strcmp(ParseInputRecord.Operator, "BBCON*"))
+              /*|| !strcmp(ParseInputRecord.Operator, "BBCON*") */)
             ParseInputRecord.Operand = "-0";
           else if (Block1)
             {
@@ -2289,9 +2309,45 @@ Pass(int WriteOutput, const char *InputFilename, FILE *OutputFile, int *Fatals,
                 {
                   extern int
                   ParseGeneral(ParseInput_t *, ParseOutput_t *, int, int);
+                  int i, Value;
+                  int Flags = 0;
+
+                  // Based on "2 0002" assembling to "20003" in Retread, it appears that we need
+                  // to figure out if numeric codes correspond to double-word instructions (which
+                  // would increment the operand by 1, assuming "2 0002" is treated as "DAS 0002").
+                  // To do that we need to resolve the operand and figure out which quarter-code we're
+                  // getting.
+                  i = GetOctOrDec(ParseInputRecord.Operand, &Value);
+
+                  if (i) {
+                      // Operand wasn't numeric, so try it as a label.
+                      Address_t K;
+                      char args[32];
+                      args[0] = '\0';
+
+                      if (ParseInputRecord.Mod1) strcpy(args, ParseInputRecord.Mod1);
+                      i = FetchSymbolPlusOffset(&ParseInputRecord.ProgramCounter, ParseInputRecord.Operand, args, &K);
+                      if (i) {
+                          // Wasn't a symbol either. Panic.
+                          sprintf(ParseOutputRecord.ErrorMessage, "Symbol \"%s\" undefined or offset bad", 
+                                  ParseInputRecord.Operand);
+                          ParseOutputRecord.Fatal = 1;
+                      }
+                      // We were able to resolve our symbol
+                      Value = K.SReg;
+                  }
+                  
+                  // Check for one of the double-word instructions. If we find one, notify
+                  // ParseGeneral that one needs to be added to the operand.
+                  if ((!ParseInputRecord.Extend && (NumOperator == 2) && ((Value & 006000) == 0)) // DAS
+                     || (!ParseInputRecord.Extend && (NumOperator == 5) && ((Value & 006000) == 002000)) // DXCH
+                     || (ParseInputRecord.Extend && (NumOperator == 4)) // DCA
+                     || (ParseInputRecord.Extend && (NumOperator == 5))) { // DCS
+                      Flags |= KPLUS1;
+                  }
 
                   ParseGeneral(&ParseInputRecord, &ParseOutputRecord,
-                      NumOperator << 12, 0);
+                      NumOperator << 12, Flags);
                   ParseOutputRecord.Words[0] = AddAgc(
                       ParseOutputRecord.Words[0], OpcodeOffset);
                   ParseOutputRecord.EBank.oneshotPending = 0;
@@ -2532,9 +2588,10 @@ Pass(int WriteOutput, const char *InputFilename, FILE *OutputFile, int *Fatals,
 
                           for (i = 0; i < ParseOutputRecord.NumWords; i++)
                             {
-                              ObjectCode[bank][(ParseInputRecord.ProgramCounter.SReg
-                                  + i) & 01777] = ParseOutputRecord.Words[i]
-                                  & 077777;
+                              int SReg = (ParseInputRecord.ProgramCounter.SReg + i) & 01777;
+                              int Data = ParseOutputRecord.Words[i] & 077777;
+                              ObjectCode[bank][SReg] = Data;
+                              Parities[bank][SReg] = CalculateParity(Data);
                             }
 
                           // JMS: 07.28
@@ -2759,4 +2816,3 @@ Pass(int WriteOutput, const char *InputFilename, FILE *OutputFile, int *Fatals,
 
   return (RetVal);
 }
-

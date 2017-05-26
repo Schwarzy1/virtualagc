@@ -1,5 +1,6 @@
 ### FILE="Main.annotation"
 ## Copyright:   Public domain.
+## Filename:    T6-RUPT_PROGRAMS.agc
 ## Purpose:     A section of Luminary revision 210.
 ##              It is part of the source code for the Lunar Module's (LM)
 ##              Apollo Guidance Computer (AGC) for Apollo 15-17.
@@ -7,19 +8,19 @@
 ##              that the code format has been changed to conform to the
 ##              requirements of the yaYUL assembler rather than the
 ##              original YUL assembler.
-## Reference:   pp. XXX-XXX
+## Reference:   pp. 1400-1402
 ## Assembler:   yaYUL
 ## Contact:     Ron Burkey <info@sandroid.org>.
 ## Website:     www.ibiblio.org/apollo/index.html
 ## Mod history: 2016-11-17 JL   Created from Luminary131 version.
-
-## NOTE: Page numbers below have yet to be updated from Luminary131 to Luminary210!
-
+##              2016-11-30 RRB  Updated from Luminary210 images.
+##		2016-12-26 RSB	Comment-text proofed using ProoferComments
+##				and corrected errors found.
 
 ## Page 1400
 # PROGRAM NAMES:	(1) T6JOBCHK	MOD. NO. 5	OCTOBER 2, 1967
 #			(2) DOT6RUPT
-# MODIFICATION BY:	LOWELL G. HULL (A.C.ELECTRONICS)
+# MODIFICATION BY:	LOWELL G HULL (A.C.ELECTRONICS)
 #
 # THESE PROGRAMS ENABLE THE LM DAP TO CONTROL THE THRUST TIMES OF THE REACTION CONTROL SYSTEM JETS BY USING TIME6.
 # SINCE THE LM DAP MAINTAINS EXCLUSIVE CONTROL OVER TIME6 AND ITS INTERRUPTS, THE FOLLOWING CONVENTIONS HAVE BEEN
@@ -39,6 +40,7 @@
 #				C.	A T6RUPT IS IN PROCESS NOW.
 #	4.	ALL PROGRAMS WHICH OPERATE IN EITHER INTERRUPT MODE OR WITH INTERRUPT INHIBITED MUST CALL T6JOBCHK
 #		EVERY 5 MILLISECONDS TO PROCESS A POSSIBLE WAITING T6RUPT BEFORE IT CAN BE HONORED BY THE HARDWARE.
+#
 #      (5.	PROGRAM JTLST, IN Q,R-AXES, HANDLES THE INPUT LIST.)
 #
 # T6JOBCHK CALLING SEQUENCE:
@@ -46,7 +48,7 @@
 #		L+1	(RETURN)
 #
 # DOT6RUPT CALLING SEQUENCE:
-#			DXCH	ARUPT		# T6RUPT LEAD IN AT LOCATION 4004.
+#			DXCH	ARUPT		T6RUPT LEAD IN AT LOCATION 4004.
 #			EXTEND
 #			DCA	T6ADR
 #			DTCB
@@ -73,11 +75,11 @@
 		COUNT*	$$/DAPT6
 
 T6JOBCHK	CCS	TIME6		# CHECK TIME6 FOR WAITING T6RUPT:
-		TC	Q		# NONE: CLOCK COUNTING DOWN.
+		TC	Q		# NONE: CLOCK COUTING DOWN.
 		TC	CCSHOLE
 		TC	CCSHOLE
 
-# CONTROL PASSES TO T6JOB ONLY WHEN C(TIME6) = -0 (I.E., WHEN A T6RUPT MUST BE PROCESSED).
+# CONTROL PASSES TO T6JOB ONLY WHEN C(TIME6) = -0 (I.E. WHEN A T6RUPT MUST BE PROCESSED).
 
 T6JOB		CA	POSMAX
 		ZL
@@ -145,12 +147,10 @@ WRITEV		TS	L
 		EBANK=	T6NEXT
 		COUNT*	$$/DAPT6
 
-DOT6RUPT	LXCH	BANKRUPT	# (INTERRUPT LEAD-INS CONTINUED)
+DOT6RUPT	LXCH	BANKRUPT	# (INTERRUPT LEAD INS CONTINUED)
 		EXTEND
 		QXCH	QRUPT
 
 		TC	T6JOBCHK	# CALL T6JOBCHK.
 
 		TCF	RESUME		# END TIME6 INTERRUPT PROCESSOR.
-		
-

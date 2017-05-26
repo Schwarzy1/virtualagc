@@ -34,6 +34,11 @@
 		2012-09-25 JL   Handle arguments like "DUMMYJOB + 2", i.e.
 		                Mod1=+, Mod2=2.
                 2016-08-18 RSB  Tweaks related to Block1.
+                2016-12-18 MAS  Weakened erroneous EXTEND checks when dealing
+                                with explicit TC 6's, which can show up as
+                                targets for an INDEX and so don't actually extend.
+                2017-01-29 MAS  Added some special logic for handling Raython-
+                                style literal operands.
  */
 
 #include "yaYUL.h"
@@ -108,9 +113,12 @@ int ParseGeneral(ParseInput_t *InRecord, ParseOutput_t *OutRecord, int Opcode, i
 
     // Do some sanity checking.
     if (!Block1) {
-      if (InRecord->Extend && !(Flags & EXTENDED) && !InRecord->IndexValid) {
-          strcpy(OutRecord->ErrorMessage, "Illegally preceded by EXTEND.");
-          OutRecord->Fatal = 1;
+      if (InRecord->Extend &&  !(Flags & EXTENDED) && !InRecord->IndexValid) {
+          if (InRecord->Extend != 2) {
+             // Bomb out if the extend came from an EXTEND, but not from an explicit TC 6
+             strcpy(OutRecord->ErrorMessage, "Illegally preceded by EXTEND.");
+             OutRecord->Fatal = 1;
+          }
           OutRecord->Extend = 0;
       } else if (!InRecord->Extend && (Flags & EXTENDED)) {
           strcpy(OutRecord->ErrorMessage, "Required EXTEND is missing.");
@@ -127,6 +135,10 @@ int ParseGeneral(ParseInput_t *InRecord, ParseOutput_t *OutRecord, int Opcode, i
     if (!i && (Flags & ENUMBER) && *InRecord->Operand != '+' && *InRecord->Operand != '-') {
         int Offset;
 
+        if (Raytheon && Value >= 02000 && Value < 04000) {
+            // For Raytheon builds, shift common-fixed literals into the expected range
+            Value += 010000 + InRecord->ProgramCounter.FB * 02000;
+        }
         PseudoToStruct(Value, &K);
 
         if (!GetOctOrDec(args, &Offset))
@@ -232,10 +244,18 @@ int ParseGeneral(ParseInput_t *InRecord, ParseOutput_t *OutRecord, int Opcode, i
         OutRecord->Extend = InRecord->Extend;
     } else {
         OutRecord->Extend = 0;
-        if (Opcode == 000000 && !(Flags & EXTENDED) && !K.Invalid && (K.Constant || (K.Erasable && K.Unbanked)) && K.SReg == 06)
-            OutRecord->Extend = 1;
-        else
+        if (Opcode == 000000 && !(Flags & EXTENDED) && !K.Invalid && (K.Constant || (K.Erasable && K.Unbanked)) && K.SReg == 06) {
+            if (strlen(InRecord->Alias) == 0) {
+                // This was an explicit TC 6 rather than an EXTEND. This can show up (as in Retread, for example),
+                // as something that gets indexed into something other than an EXTEND, and so should be allowed through.
+                // Setting Extend = 2 makes the erroneous Extend check non-fatal.
+                OutRecord->Extend = 2;
+            } else {
+                OutRecord->Extend = 1;
+            }
+        } else {
             OutRecord->Extend = 0;
+        }
     }
     OutRecord->IndexValid = 0;
     return (0);

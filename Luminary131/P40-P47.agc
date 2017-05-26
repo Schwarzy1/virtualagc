@@ -8,13 +8,21 @@
 ##		that the code format has been changed to conform to the
 ##		requirements of the yaYUL assembler rather than the
 ##		original YUL assembler.
-## Reference:	pp. 752-784 of 1729.pdf.
+## Reference:	pp. 747-779
 ## Contact:	Ron Burkey <info@sandroid.org>.
 ## Website:	www.ibiblio.org/apollo
 ## Mod history:	05/24/03 RSB.	Began transcribing.
 ##		2010-01-05 JL	Fixed indentation of STADR instruction.
+##		2016-12-01 RSB	There were a number of "modern" comments about hand-written
+##				notations, which I had added back in 2003, but whiche never
+##				got converted to ##-style.  However, after having changed them
+##				to ##-style, they no longer worked properly after being rendered
+##				to html, so they had to be considerably reworked to fix that.
+##		2017-01-06 RSB	Page numbers now agree with those on the
+##				original harcopy, as opposed to the PDF page
+##				numbers in 1701.pdf.
 
-## Page 752
+## Page 747
 # PROGRAM DESCRIPTION: F40BOTH		DECEMBER 22, 1966
 # MOD 03 BY PETER ADLER			MARCH 3, 1967
 # CALLED VIA JOB FROM V37E
@@ -22,7 +30,7 @@
 # FUNCTIONAL DESCRIPTION
 #	1)	TO COMPUTE A PREFERRED IMU ORIENTATION AND A PREFERRED VEHICLE ATTITUDE FOR A LM DPS
 #		THRUSTING MANEUVER.
-# (There is no item #2 in the original program listing --- RSB 2003.)
+## There is no item #2 in the original program listing &mdash; RSB 2003.
 #	3)	TO DO THE VEHICLE MANEUVER TO THE THRUSTING ATTITUDE.
 #	4)	TO CONTROL THE PGNCS DURING COUNTDOWN, IGNITION, THRUSTING, AND THRUST TERMINATION OF A
 #		PGNCS CONTROLLED DPS MANEUVER.
@@ -44,7 +52,7 @@
 #	ALLCOAST	DAP COASTING INITIALIZATION
 #	CLOKTASK	ERGO CLOCKJOB -- COUNT DOWN
 #	PHASCHANG, INTPRET, FLAGUP, FLAGDOWN, WAITLIST, LONGCALL, GOFLASH, GOFLASHR, GOPERF1, ALARM,
-#	PRIOLARM, GOTOP00H, ENDOFJOB, BANKCALL, SETMAXDB, SETMINDB, CHECKMM, FLATOUT, OUTFLAT,
+#	PRIOLARM, GOTOPOOH, ENDOFJOB, BANKCALL, SETMAXDB, SETMINDB, CHECKMM, FLATOUT, OUTFLAT,
 #	KILLTASK, SGNAGREE, TPAGREE, ETC.
 #
 # RESTARTS VIA GROUP 4
@@ -59,7 +67,7 @@
 #	V05N09	POSSIBLE ALARMS
 #	V50N07	PLEASE SELECT P00
 #
-## Page 753
+## Page 748
 #	VIA R30
 #
 #	V06N44	HAPO, PERI, TFF
@@ -67,9 +75,9 @@
 #
 # ALARM OR ABORT EXIT MODES
 #	PROGRAM ALARM, FLASHING DISPLAY OF ALARM CODE 1706 IF P40 SELECTED WITH DESCENT UNIT STAGED.
-#	V34E (TERMINATE) IS THE ONLY RESPONSE ACCEPTED.  TC GOTOP00H.
+#	V34E (TERMINATE) IS THE ONLY RESPONSE ACCEPTED.  TC GOTOPOOH.
 #
-#	PROGRAM ALARM, FLASH CODE 1703:  TIG LESS THAN 45 SECS AWAY.  V34E= GOTOP00H OR V33E= SLIP
+#	PROGRAM ALARM, FLASH CODE 1703:  TIG LESS THAN 45 SECS AWAY.  V34E= GOTOPOOH OR V33E= SLIP
 #	TIG BY 45 SECS.
 #
 # ERASABLE INITIALIZATION
@@ -109,7 +117,7 @@ P40LM		TC	PHASCHNG
 		TS	DVTHRUSH
 		CAF	FOUR
 		TS	DVCNTR
-## Page 754
+## Page 749
 		TC	INTPRET		# LOAD CONSTANTS FOR DPS BURN
 		VLOAD	CLEAR		# LOAD F, MDOT, TDECAY
 			FDPS
@@ -159,7 +167,7 @@ POSTBURN	CA	Z
 		TC	TERM40
 		TCF	TIGNOW
 		TC	POSTBURN
-## Page 755
+## Page 750
 P40PHS1		TC	PHASCHNG
 		OCT	00014
 		TCF	ENDOFJOB
@@ -190,7 +198,7 @@ TERM40		EXTEND
 		TC	IBNKCALL
 		CADR	RESTORDB
 		RELINT
-		TC	GOTOP00H
+		TC	GOTOPOOH
 
 		EBANK=	WHICH
 		COUNT*	$$/P41
@@ -201,9 +209,9 @@ P41LM		CAF	P41ADRES	# INITIALIZATION FOR BURNBABY
 		CADR	R02BOTH
 
 		TC	INTPRET		# BOTH LM
-# In the original program listing, the following line has a hand-written notation in the
-# label field which appears to be "rrPIN" or "PPPIN". I don't claim to know that this means,
-# but I present it for your delectation.---RSB 2003.
+## In the original program listing, the following line has a hand-written notation in the
+## label field which appears to be "rrPIN" or "PPPIN". I don't claim to know that this means,
+## but I present it for your delectation.&mdash;RSB 2003.
 		BON	DLOAD		# IF NJETSFLAG IS SET, LOAD Z JET F
 			NJETSFLG
 			P41FJET1
@@ -212,7 +220,7 @@ P41LM		CAF	P41ADRES	# INITIALIZATION FOR BURNBABY
 P41FJET		STCALL	F
 			P41IN
 P41FJET1	DLOAD
-## Page 756
+## Page 751
 			FRCS2
 		STORE	F
 
@@ -264,7 +272,7 @@ REDO6.7		CA	DISPDEX		# ON A RESTART, DO NOT PUT UP DISPLAY IF
 		AD	TWO		# BLANKING (BETWEEN TIG-35 AND TIG-30)
 
 #	********************************
-## Page 757
+## Page 752
 
 		EXTEND
 		BZF	BLNKWAIT
@@ -315,7 +323,7 @@ P42LM		TC	PHASCHNG
 		CCS	A
 		TC	P40ALM
 P42STAGE	TC	BANKCALL
-## Page 758
+## Page 753
 		CADR	R02BOTH
 		CAF	THRESH2		# INITIALIZE DVMON
 		TS	DVTHRUSH
@@ -366,7 +374,7 @@ CALCN83		TC	INTPRET
 			DELVCTL
 			DELVREF
 		STORE	DELVSIN		# TEMP STORAGE FOR RESTARTS
-## Page 759
+## Page 754
 		CALL
 			S41.1
 		STORE	DELVIMU
@@ -386,8 +394,8 @@ CALCN83		TC	INTPRET
 P47BOD		CAF	V1683
 		TC	BANKCALL
 		CADR	GOFLASHR
-		TC	GOTOP00H
-		TC	GOTOP00H
+		TC	GOTOPOOH
+		TC	GOTOPOOH
 
 		TCF	P47BODY
 
@@ -417,7 +425,7 @@ IMPLBURN	CA	TGO +1
 
 		TC	FIXDELAY	# WAIT HALF A SECOND
 		DEC	50
-## Page 760
+## Page 755
 		TC	NOULLAGE	# TURN OFF ULLAGE
 
 		TC	TASKOVER
@@ -467,7 +475,7 @@ ENGINOF3	CS	ENGONBIT	# INSURE ENGONFLG IS CLEAR.
 		WOR	CHAN14
 
 		TC	ISWRETRN
-## Page 761
+## Page 756
 COASTSET	TC	IBNKCALL	# DO DAP COASTING INITIALIZATION
 		CADR	ALLCOAST
 		TC	TASKOVER
@@ -518,7 +526,7 @@ GETRANS		DLOAD	DSU
 		STCALL	DELLT4
 			QTEMP1
 
-## Page 762
+## Page 757
 NO.9		TC	INTPRET
 		GOTO
 			QTEMP1
@@ -568,7 +576,7 @@ NSTEER		INHINT
 		TC	2PHSCHNG
 		OCT	40114		# ENGOFTSK (ENGINOFF)
 		OCT	00035		# SERVICER -- REREADAC
-## Page 763
+## Page 758
 		TCF	ENDOFJOB
 
 GETDT		CCS	A
@@ -602,7 +610,7 @@ ACADN85		=	P41TABLE +2
 ACADN83		2CADR	CALCN83
 
 # ******************************************
-## Page 764
+## Page 759
 # PROGRAM DESCRIPTION: S40.1		DATE: 15 NOV 66
 # MOD N02				LOG SECTION P40-P47
 # MOD BY ZELDIN AND ADAPTED BY TALAYCO
@@ -662,7 +670,7 @@ ACADN83		2CADR	CALCN83
 		BANK	14
 		SETLOC	P40S1
 		BANK
-## Page 765
+## Page 760
 		COUNT*	$$/S40.1
 S40.1		STQ	DLOAD
 			QTEMP
@@ -713,7 +721,7 @@ CALCTHET	SETPD	VLOAD
 			36D
 		VSL2 	VAD
 		STADR
-## Page 766
+## Page 761
 		STORE	VGTIG		# VG IGNITION SCALED AT 2(+7) M/CS
 
 		UNIT
@@ -764,11 +772,11 @@ SMALLEPS	PUSH	SXA,1
 			QTEMP
 
 EPS1		2DEC*	2.777777778 E-2*	# 10 DEGREES AT 1 REVOLUTION
-## Page 767
+## Page 762
 EPS2		2DEC*	9.722222222 E-2*	# 35 DEGREES AT 1 REVOLUTION.
 THETACON	2DEC	.31830989 B-8
 
-## Page 768
+## Page 763
 # SUBROUTINE NAME:  S40.2,3		MOD. NO. 3, DATE APRIL 4, 1967
 # MODIFICATION BY:  JONATHON D. ADDELSTON (ADAMS ASSOCIATES)
 # MOD. NO. 4:  JULY 18, 1967: PETER ADLER (MIT/IL)
@@ -806,7 +814,7 @@ THETACON	2DEC	.31830989 B-8
 #	4.	PFRATFLG	INTERPRETIVE FLAG.  ON: PREFERRED ORIENTATION COMPUTED; OFF: NOT COMPUTED.
 #
 # DEBRIS:  NONE
-## Page 769
+## Page 764
 
 		COUNT*	$$/S40.2
 S40.2,3		VLOAD			# UT:  DESIRED THRUST DIRECTION (HALF-UNIT)
@@ -838,7 +846,7 @@ FIXY		VLOAD	VXV		# IN THIS CASE,
 		UNIT	PUSH
 		GOTO
 			STORY
-## Page 770
+## Page 765
 # SUBROUTINE S40.8
 # MODIFIED APRIL 3, 1968 BY PETER ADLER, MIT/IL
 #
@@ -880,7 +888,7 @@ FIXY		VLOAD	VXV		# IN THIS CASE,
 #	MPACS, PUSHLIST
 
 		COUNT*	$$/S40.8
-## Page 771
+## Page 766
 S40.8		BOF			# GENERATE VR IF NOT EXTERNAL DELTA-V BURN
 			XDELVFLG
 			RASTEER1
@@ -931,7 +939,7 @@ TGDCALC		SETPD	VLOAD
 
 ALARMIT		EXIT
 
-## Page 772
+## Page 767
 		TC	ALARM
 		OCT	01407
 		TC	INTPRET
@@ -942,7 +950,7 @@ ALARMIT		EXIT
 FOURSECS	2DEC	400		# 400 CS SCALED AT 2(+28) CS
 2VEXHUST	=	VEX
 
-## Page 773
+## Page 768
 # NAME:  		S40.13 -- TIMEBURN
 #
 # FUNCTION		(1) DETERMINE WHETHER A GIVEN COMBINATION OF VELOCITY TO
@@ -993,12 +1001,12 @@ S40.13		TC	INTPRET
 			S40.13D		# FOR DPS ENGINE
 			NOTHROTL
 		DLOAD	DDV		# 00D = MAG OF VGTIG CORRECTED
-		# In the following line in the original program listing, +24 is crossed
-		# out and +23 written in by hand.---RSB 2003
+		## In the following line in the original program listing, +24 is crossed
+		## out and +23 written in by hand.&mdash;RSB 2003
 			K1VAL		# M.NEWTONS-CS AT +23
 			WEIGHT/G
 		BDSU	BMN
-## Page 774
+## Page 769
 			00D
 			S40.131		# TGO LESS THAN 100 CS
 		PDDL	DMP		# 02D = TEMP1 AT +7
@@ -1026,8 +1034,8 @@ S40.13		TC	INTPRET
 			S40.132
 S40.131		DLOAD	DMP
 			WEIGHT/G
-		# In the following line in the original program listing, PUSH is
-		# hand-circled.---RSB 2003
+## In the following line in the original program listing, PUSH is
+## hand-circled.&mdash;RSB 2003
 		SR1	PUSH
 		DAD	DDV
 			K2VAL		# M.NEWTON CS AT +24
@@ -1036,12 +1044,12 @@ S40.132		SET	EXIT
 			IMPULSW
 S40.132*	TC	TPAGREE
 		CA	MPAC
-		# In the following line in the original program listing,
-		# TS TGO +1 is hand-written in the comment area.---RSB 2003
+## In the following line in the original program listing,
+## TS TGO +1 is hand-written in the comment area.&mdash;RSB 2003
 		XCH	L
 		CA	ZERO
-		# In the original program listing, TS TGO is hand-written,
-		# seemingly between CA ZERO and DXCH TGO.---RSB 2003.
+## In the original program listing, TS TGO is hand-written,
+## seemingly between CA ZERO and DXCH TGO.&mdash;RSB 2003.
 		DXCH	TGO
 		TCF	S40.134
 
@@ -1055,7 +1063,7 @@ S40.13D		DLOAD	DMP		# FOR DPS ENGINE
 			S40.136
 			NOTHROTL
 		BOV	PUSH
-## Page 775
+## Page 770
 			S40.130V
 S40.127		DSU	BPL
 			6SEC		# 600.0 CS AT +14
@@ -1104,7 +1112,7 @@ APSTGO		DDV	SL2
 #
 # INPUT			RN	ACTIVE VEHICLE RADIUS VECTOR IN METERS AT +29
 #			VN	ACTIVE VEHICLE VELOCITY VECTOR IN METERS/CS AT +7
-## Page 776
+## Page 771
 #			VPREV	LAST COMPUTED VELOCITY REQUIRED VECTOR IN
 #				METERS/CS AT +7.
 #			TIG	TIME OF IGNITION IN CS AT +28.
@@ -1157,7 +1165,7 @@ RASTEER1	VLOAD	ABVAL
 			36D		# C(36D) = ABVAL(C)
 		XAD,2	SL*
 			X1
-## Page 777
+## Page 772
 			0,2
 		STORE	30D
 		NORM	DMP
@@ -1182,44 +1190,72 @@ RASTEER1	VLOAD	ABVAL
 			MU/A
 		BDSU
 			MUASTEER
-		# In the original program listing, the following line has a hand-written
-		# comment which appears to be something like
-		#             (S - C) u
-		#	( u - --------- )
-		#                2 a
-		# where `u' represents a lower-case Greek MU.  Other similar handwritten
-		# comments are included below without further apology.---RSB 2003.
+## In the original program listing, the following line has a hand-written
+## comment which appears to be something like
+## <pre>
+##          (S - C) &mu;
+##    ( &mu; - --------- )
+##             2 a
+## </pre>
+## Other similar handwritten comments are included below without further apology.&mdash;RSB 2003.
+## (RSB 2016.)  If you refer to the equivalent log section for Luminary 210, you'll see that the
+## code code has remained the same but that actual program comments similar to these hand-written
+## comments have appeared.
 		PDDL	DSU
 			SS
-			RMAG		# (S-R) is written in by hand.
+## (S-R) is written in by hand.
+			RMAG
 		NORM	SR1
-			X1		#   (S - R)       u (S - C)
-		DDV	DMP		# 2 ------- ( u - --------- )
-			R1C		#     R C            2 a
+			X1		
+## <pre>
+##   (S - R)       &mu; (S - C)
+## 2 ------- ( &mu; - --------- )
+##     R C            2 a
+## </pre>
+		DDV	DMP
+			R1C
 		XSU,2	SL*
 			X1
 			1,2
-		LXA,2			#        2 (S - R)      u (S - C)
-			MUSCALE		# SQRT ( --------- (u - --------- ) )
-		SQRT	SIGN		#           R C            2 a
-			GEOMSGN		# (GEOMSGN = SGNA)
+		LXA,2			
+			MUSCALE		
+## <pre>
+##        2 (S - R)      &mu; (S - C)
+## SQRT ( --------- (&mu; - --------- ) )
+##           R C            2 a
+## </pre>
+		SQRT	SIGN		
+## (GEOMSGN = SGNA)
+			GEOMSGN		
 		STORE	32D		# + OR - A
-		#                  2 (S - R)      u (S - C)
-		# A = SGNA (SQRT ( --------- (u - ---------) ) )
-		#                     R C            2 a
+## <pre>
+##                  2 (S - R)      &mu; (S - C)
+## A = SGNA (SQRT ( --------- (&mu; - ---------) ) )
+##                     R C            2 a
+## </pre>
 		DLOAD	DMP
 			SS
-			MU/A		#     u S
-		BDSU			# u - ___
-			MUASTEER	#     2 a
+			MU/A		
+## <pre>
+##     &mu; S
+## &mu; - ___
+##     2 a
+## </pre>
+		BDSU			
+			MUASTEER	
 		PDDL	DSU
 			SS
 			RTMAG
 		NORM	SR1
-			X1		# 2 (S - R T)       u S
-		DDV	DMP		# ----------- ( u - --- )
-					#     R C           2 a
-## Page 778
+			X1		
+## <pre>
+## 2 (S - R T)       &mu; S
+## ----------- ( &mu; - --- )
+##     R C           2 a
+## </pre>
+		DDV	DMP		
+					
+## Page 773
 			R1C
 		XSU,2	SL*
 			X1
@@ -1230,33 +1266,47 @@ RASTEER1	VLOAD	ABVAL
 			30D
 			SS
 		SQRT	PUSH
-		SR1	ASIN		# ASIN ( SQRT (S-C)/S ) )
+## ASIN ( SQRT (S-C)/S ) )
+		SR1	ASIN		
 		DMP	PDDL
 			2PI+3
 		PDDL	DDV
 			30D
 			SS
-		BOV			# SQRT (C/S) SQRT ( (S-C)/S )
+## SQRT (C/S) SQRT ( (S-C)/S ) =
+		BOV			
 			+1
-		SQRT	DMP		# SQRT(C/S) SQRT((S-C)/S) = (1/S) SQRT(C(S-C))
+## SQRT(C/S) SQRT((S-C)/S) = (1/S) SQRT(C(S-C))
+		SQRT	DMP		
 		SR3	BDSU
+## SGNA( ARCSIN( SQRT((S-C)/S) ) - (1/S) SQRT(C(S-C)) )
 		SIGN	PDDL
-			GEOMSGN		# SGNA( ARCSIN( SQRT((S-C)/S) ) - (1/S) SQRT(C(S-C)) )
+			GEOMSGN		
 			2PI+3
-		SR2	DSU		# (C/S) (PI/2 - SGNA(                           ) )
+## (C/S) (PI/2 - SGNA(...) )
+		SR2	DSU		
 		DMP	PDDL
 			SS
-			SS		#                   3
-		SR3	SQRT		# S SQRT(S) = SQRT(S )
+			SS
+## S SQRT(S) = SQRT(S<sup>3</sup>)
+		SR3	SQRT		
 		DMP
-		PDDL	SL3		#        3
-			MUASTEER	#       S
-		SQRT	BDDV		# SQRT(---)
-		DSU	DAD		#      2 u
-			TPASS4		# TMIN ENERGY
+		PDDL	SL3		
+			MUASTEER	
+## <pre>
+##        3
+##       S
+## SQRT(---)
+##      2 &mu;
+## </pre>
+## TMIN ENERGY
+		SQRT	BDDV		
+		DSU	DAD		
+			TPASS4		
 			PIPTIME
-		STODL	30D		# (t  - t  )
-		SIGN			#   M    2
+## (t<sub>M</sub> - t<sub>2</sub> )
+		STODL	30D		
+		SIGN			
 			30D		# B WITH SIGN
 		STORE	30D
 		BON	VLOAD
@@ -1265,14 +1315,19 @@ RASTEER1	VLOAD	ABVAL
 			IC
 		VSU	UNIT
 			UNIT/R/
-		VXSC	PDVL		# UNCM
-			30D		# B UNCM
+## UNCM
+		VXSC	PDVL
+## B UNCM		
+			30D		
 			IC
 		VAD	UNIT
-			UNIT/R/		# VNC
-## Page 779
+## VNC
+			UNIT/R/		
+## Page 774
+
+## A UNCP
 GETVRVG1	VXSC	VAD
-			32D		# A UNCP
+			32D		
 GETVRVG2	LXC,2	VSR*
 			RTX2
 			0 -1,2
@@ -1321,11 +1376,11 @@ FIRSTTME	SLOAD	BZE
 			RTX2
 			GETGOBL
 		VLOAD	GOTO		# NO OBLATENESS COMP IF IN MOON SPHERE
-## Page 780
+## Page 775
 			DELVEET3
 			NOGOBL
-# In the original program listing, VLOAD UNIT RN below is circled, and connected to the
-# comment after 34D ("34D = /RN/ etc.") with an arrow.---RSB 2003.
+## In the original program listing, VLOAD UNIT RN below is circled, and connected to the
+## comment after 34D ("34D = /RN/ etc.") with an arrow.&mdash;RSB 2003.
 GETGOBL		VLOAD	UNIT		# CALCULATE OBLATENESS TERM.
 			RN
 		DLOAD	DSU
@@ -1343,7 +1398,7 @@ NOGOBL		STORE	DELVEET3	# VG = VR + GOBL - VN
 
 2PI+3		2DEC	3.141592653 B-2
 
-## Page 781
+## Page 776
 # TRIMGIMB	(FORMERLY S40.6)
 # MOD 0		24 FEB 67	PETER ADLER
 #
@@ -1398,7 +1453,7 @@ ROLLOVER	CA	FLAGWRD6	# IF HERE INLINE (ROLL DONE) IS PITCH DONE
 		CAF	PRIO10		# RETURN TO R03.
 		TC	NOVAC
 		EBANK=	WHOCARES
-## Page 782
+## Page 777
 		2CADR	TRIMDONE
 
 		TC	TASKOVER
@@ -1410,7 +1465,7 @@ PITCHOFF	CS	BIT10
 		ADRES	GMBDRVSW
 		TC	TASKOVER
 
-## Page 783
+## Page 778
 # SUBROUTINE NAME:  S41.1	MOD. NO. 0	DATE: FEBRUARY 28, 1967
 # MOD. NO. 1	DATE: JANUARY 23, 1968, BY PETER ADLER (MIT/IL)
 #
@@ -1442,7 +1497,7 @@ PITCHOFF	CS	BIT10
 #
 # RESTART PROTECTION:  NONE.
 #
-## Page 784
+## Page 779
 # INPUT:
 #	1.	REFSMMAT.
 #	2.	CDUX, CDUY, CDUZ.

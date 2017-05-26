@@ -1,15 +1,18 @@
 ### FILE="Main.annotation"
-## Copyright:    Public domain.
-## Filename:	 LUNAR_LANDMARK_SELECTION_FOR_CM.agc
-## Purpose:      Part of the source code for Colossus build 237.
-##               This is for the Command Module's (CM) Apollo Guidance
-##               Computer (AGC), for Apollo 8.
-## Assembler:    yaYUL
-## Contact:      Jim Lawton <jim DOT lawton AT gmail DOT com>
-## Website:      www.ibiblio.org/apollo/index.html
-## Page Scans:   www.ibiblio.org/apollo/ScansForConversion/Colossus237/
-## Mod history:  2011-03-06 JL	Adapted from corresponding Colossus 249 file.
-##		 2011-04-17 JL	Removed temporary line.
+## Copyright:   Public domain.
+## Filename:	LUNAR_LANDMARK_SELECTION_FOR_CM.agc
+## Purpose:     Part of the source code for Colossus build 237.
+##              This is for the Command Module's (CM) Apollo Guidance
+##              Computer (AGC), for Apollo 8.
+## Assembler:   yaYUL
+## Contact:     Jim Lawton <jim DOT lawton AT gmail DOT com>
+## Website:     www.ibiblio.org/apollo/index.html
+## Page Scans:  www.ibiblio.org/apollo/ScansForConversion/Colossus237/
+## Mod history: 2011-03-06 JL	Adapted from corresponding Colossus 249 file.
+##		2011-04-17 JL	Removed temporary line.
+##		2017-01-01 RSB	Proofed comment text using octopus/ProoferComments,
+##				and fixed errors found.
+##		2017-01-28 RSB	WTIH -> WITH.
 
 ## Page 886
 		BANK	31
@@ -68,7 +71,7 @@ CALCTLS		TC	INTPRET
 DISTLS		CAF	V06N31**	# DISPLAY TIME TO LANDING SITE
 		TC	BANKCALL
 		CADR	GOMARKF
-		TC	ENDEXT		# TERMINATE WTIH V34E
+		TC	ENDEXT		# TERMINATE WITH V34E
 		TC	PROCLMKS	# PROCEED WITH V33E
 		TC	DISTLS		# ILLEGAL RESPONSE, DO AGAIN
 PROCLMKS	TC	INTPRET		# BEGIN LANDMARK PROCESSING
@@ -99,7 +102,7 @@ JLOOPP		AXT,1	XSU,1		# SET XR1 FOR LONGITUDE OF LANDMARK
 			LATTAB -2,2
 			LAT
 		ABS	PUSH		# DELTA LAT = ABS(LAT - LATJ)        PD=02
-		DSU	BPL		# DELTAL OPERATOR THAN DELTA LAT
+		DSU	BPL		# DELTAL GREATER THAN DELTA LAT
 			DELTAL
 			LMKLOOP		# NO
 		DLOAD	STADR		#                                    PD=00
@@ -129,7 +132,7 @@ DISLID		SLOAD	SR1		# ID = -INDEXNUM/2 + 1
 		TC	BANKCALL
 		CADR	GOMARKFR
 		TC	ENDEXT		# TERMINATE WITH V34E
-		TC	DISTTL		# PROCEED WTIH V33E
+		TC	DISTTL		# PROCEED WITH V33E
 		TC	NEXTBAND	# RECYCLE WITH V32E
 		CAF	FIVE		# BLANK R1 AND R3
 		TC	BLANKET
@@ -267,7 +270,7 @@ BANDTABL	DEC	-12		# +60 DEGREE BAND
 		DEC	-42		# -30 DEGREE BAND
 		DEC	-52		# -60 DEGREE BAND
 RRCSML		2DEC	.997
-V06N34**	VN	00634		# ***************************************
+V06N34**	VN	00634		# ****************************************
 V06N31**	VN	00631
 V05N70**	VN	00570
 KCOUNT		EQUALS	5D
@@ -301,7 +304,7 @@ LATTAB		2DEC	-.015231481	#   2     5  29 S
 		2DEC	-.004722222	#  15     1  42 S
 		2DEC	-.001481481	#  16     0  32 S
 		2DEC	.003101852	#  17     1  07	N
-		2DEC	.003472222	#  20     1  15 N 	N
+		2DEC	.003472222	#  20     1  15 N
 		2DEC	-.0125		#  21     4  30 S
 		2DEC	.000277777	#  22     0  06 N
 		2DEC	.011342592	#  23     4  05 N
