@@ -13,10 +13,12 @@
 ## Contact:     Ron Burkey <info@sandroid.org>.
 ## Website:     www.ibiblio.org/apollo/index.html
 ## Mod history: 2017-01-22 MAS  Created from Luminary 99.
+##              2017-02-18 NV   Updated for Luminary 116.
+##              2017-02-19 HG   Fix opcode RXCR  ->  RXOR
+##		2017-03-01 RSB	Proofed comment text by diff vs Luminary 131
+##				but no errors found.
 
-## NOTE: Page numbers below have not yet been updated to reflect Luminary 116.
-
-## Page 490
+## Page 492
                 BANK            25                              
                 SETLOC          RRLEADIN                        
                 BANK                                            
@@ -39,7 +41,7 @@ RADSAMP         CCS             RSAMPDT                         # TIMES NORMAL O
                 EBANK=          RSTACK                          
                 2CADR           DORSAMP                         
 
-                CAF             BIT14                           # FOR CYCLIC SAMPLING, RTSTDEX=
+                CAF             BIT14                           # FOR CYCLIC SAMPLING, RTSTDEX =
                 EXTEND                                          # RTSTLOC/2 + RTSTBASE
                 MP              RTSTLOC                         
                 AD              RTSTBASE                        # 0 FOR RR, 2 FOR LR.
@@ -58,17 +60,27 @@ DORSAMP2        INHINT
                 CA              FLAGWRD5                        # DON'T UPDATE RSTACK IF IN R77.
                 MASK            R77FLBIT                        
                 CCS             A                               
-                TCF             +4                              
+                TCF             R77IN                           
 
                 DXCH            SAMPLSUM                        
                 INDEX           RTSTLOC                         
                 DXCH            RSTACK                          
 
-                CS              RTSTLOC                         # CYCLE RTSTLOC.
+                CA              RADMODES                        
+                EXTEND                                          
+                RXOR            CHAN33                          
+## Page 493
+                MASK            BIT6                            
+                EXTEND                                          
+                BZF             R77IN                           
+
+                TC              ALARM                           
+                OCT             522                             
+                INCR            RFAILCNT                        
+
+R77IN           CS              RTSTLOC                         # CYCLE RTSTLOC
                 AD              RTSTMAX                         
                 EXTEND                                          
-
-## Page 491		
                 BZF             +3                              
                 CA              RTSTLOC                         
                 AD              TWO                             # STORAGE IS DP
@@ -83,11 +95,11 @@ VARADAR         CAF             ONE                             # WILL BE SENT T
                 CAF             RDRLOCS                         
                 TCF             SWCALL                          # NOT TOUCHING Q.
 
-RDRLOCS         CADR            RRRANGE                         # = 0
-                CADR            RRRDOT                          # = 1
-                CADR            LRVELX                          # = 2
-                CADR            LRVELY                          # = 3
-                CADR            LRVELZ                          # = 4
-                CADR            LRALT                           # = 5
+RDRLOCS         CADR            RRRANGE                         # =0
+                CADR            RRRDOT                          # =1
+                CADR            LRVELX                          # =2
+                CADR            LRVELY                          # =3
+                CADR            LRVELZ                          # =4
+                CADR            LRALT                           # =5
 
-
+                
